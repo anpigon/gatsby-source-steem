@@ -31,7 +31,7 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
   }
 
   const posts = await getAll(tag, sortBy);
-  posts.map(post => {
+  posts.forEach(post => {
     createPost(post);
     // const nodeStr = JSON.stringify(post);
     // const nodeHash = crypto
