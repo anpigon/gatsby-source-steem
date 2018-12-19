@@ -8,7 +8,7 @@ const limit = 10;
 
 async function getAll(tag, sortBy) {
   const posts = [];
-  const result = await sendAsync(`get_discussions_by_${sortBy}`, [{ tag, limit }]);
+  const result = await sendAsync(`get_discussions_by_${sortBy}`, [{ tag, limit }]).then(r => r.filter(e => e.author === tag));
   posts.push(...result);
 
   let received = 0;
