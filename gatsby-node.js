@@ -10,7 +10,7 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
     const date = new Date(`${post.created}Z`);
     const json_metadata = JSON.parse(post.json_metadata);
     const tags = json_metadata.tags || [];
-    const category = json_metadata.category || (title.match(/(?<=^\[)([a-zA-Zㄱ-힣\s]*)(?=\])/g) || ""); //title.match(/(?<=^\[)([^}]*)(?=\])/g)
+    const category = json_metadata.category || (title.match(/(?<=^\[)([a-zA-Zㄱ-힣\s]*)(?=\])/g) || "_"); //title.match(/(?<=^\[)([^}]*)(?=\])/g)
     const summary = post.body.replace(/!?\[[^\]]*\]\([^)]*\)/g, '').replace(/\n/g, ' ').substr(0, 100).trim();
     const content = [
       '---',
