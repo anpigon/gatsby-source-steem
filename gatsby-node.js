@@ -1,5 +1,5 @@
 const fs = require('fs');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const getAll = require('./get-all');
 
 exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => {
@@ -27,7 +27,7 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
       `${post.body}`
     ]
     const fileName = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${(date.getDate()).toString().padStart(2,'0')}---${post.permlink}`;
-    fs.writeFileSync(`${filePath}/${fileName}.md`, content.join('\n'), 'utf8');
+    fs.writeFileSync(`${path}/${fileName}.md`, content.join('\n'), 'utf8');
   }
 
   const posts = await getAll(tag, sortBy);
