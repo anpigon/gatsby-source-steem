@@ -18,7 +18,7 @@ async function getAll(tag, sortBy) {
 
     const moreResult = await sendAsync(`get_discussions_by_${sortBy}`, [
       { tag, limit, start_author: startAuthor, start_permlink: startPermlink },
-    ]);
+    ]).then(r => r.filter(e => e.author === tag));;
 
     posts.push(...moreResult.slice(1));
     received = moreResult.length;
