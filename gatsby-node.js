@@ -14,7 +14,7 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
     const summary = post.body.replace(/!?\[[^\]]*\]\([^)]*\)/g, '').replace(/\n/g, ' ').substr(0, 100).trim();
     const content = [
       '---',
-      `title: "${title.replace(/"/g, '&quot;')}"`,
+      `title: "${title.replace(/\"/g, '&quot;')}"`,
       `author: ${post.author}`,
       `date: "${post.created}Z"`,
       `layout: post`,
