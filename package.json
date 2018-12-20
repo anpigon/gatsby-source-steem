@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "lightrpc": "^0.0.2"
+    "lightrpc": "^0.0.2",
+    "remarkable": "^1.7.1"
   }
 }
