@@ -1,10 +1,15 @@
-const { promisify } = require('bluebird');
-const { createClient } = require('lightrpc');
-const client = createClient('https://api.steemit.com');
-const sendAsync = promisify(client.send, { context: client });
+// const { promisify } = require('bluebird');
+// const { createClient } = require('lightrpc');
+// const client = createClient('https://api.steemit.com');
+// const sendAsync = promisify(client.send, { context: client });
 
+const getAll = require('../get-all');
 const Remarkable = require('remarkable');
 const md = new Remarkable();
+const path = './data'
+const tag = 'anpigon'
+const sortBy = 'blog'
+// const limit = 1;
 
 function makeSummary(text) {
   let summary = md.render(text);
@@ -27,14 +32,35 @@ function parseCategory(text) {
 }
 
 (async () => {  
-  const result = await sendAsync(`get_discussions_by_blog`, [{ tag: 'anpigon', limit: 10 }])
-  .then(r => r.filter(e => e.author === 'anpigon'));
-  // console.log(result);
-
-  for(key in result) {
-    // const sumarry = makeSummary(result[key].body)
-    // console.log(sumarry, '\n----------');
-    const category = parseCategory(result[key].title);
-    console.log(category, result[key].title)
+  function createPost(post) {
+    const title = post.title
+    const date = new Date(`${post.created}Z`);
+    const json_metadata = JSON.parse(post.json_metadata);
+    const tags = json_metadata.tags || [];
+    const category = json_metadata.category || (parseCategory(title) || "_"); //title.match(/(?<=^\[)([^}]*)(?=\])/g)
+    const summary = makeSummary(post.body);
+    const content = [
+      '---',
+      `title: "${title.replace(/\"/g, '')}"`,
+      `author: ${post.author}`,
+      `date: "${post.created}Z"`,
+      `layout: post`,
+      `draft: false`,
+      `path: "${post.url}"`,
+      `category: "${category}"`,
+      `tags:`,
+      ...tags.map(tag => `  - "${tag}"`),
+      `description: "${summary}"`,
+      '---',
+      `${post.body}`
+    ]
+    console.log(content)
+    // const fileName = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${(date.getDate()).toString().padStart(2,'0')}---${post.permlink}`;
+    // fs.writeFileSync(`${path}/${fileName}.md`, content.join('\n'), 'utf8');
   }
+
+  const posts = await getAll(tag, sortBy);
+  posts.forEach(post => {
+    createPost(post);
+  });
 })()  
