@@ -8,8 +8,8 @@ const limit = 10;
 
 async function getAll(tag, sortBy) {
   const posts = [];
-  const result = await sendAsync(`get_discussions_by_${sortBy}`, [{ tag, limit }]).then(r => r.filter(e => e.author === tag));
-  posts.push(...result);
+  const result = await sendAsync(`get_discussions_by_${sortBy}`, [{ tag, limit }]);
+  posts.push(...result.filter(e => e.author === tag));
 
   let received = 0;
   do {
@@ -18,9 +18,9 @@ async function getAll(tag, sortBy) {
 
     const moreResult = await sendAsync(`get_discussions_by_${sortBy}`, [
       { tag, limit, start_author: startAuthor, start_permlink: startPermlink },
-    ]).then(r => r.filter(e => e.author === tag));;
+    ]);
 
-    posts.push(...moreResult.slice(1));
+    posts.push(...moreResult.slice(1).filter(e => e.author === tag));
     received = moreResult.length;
   } while (received === limit);
   return posts;
