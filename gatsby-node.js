@@ -10,9 +10,11 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
 
   function makeSummary(text) {
     let summary = md.render(text);
-    summary = summary.replace(/<(?:.|\n)*?>/gm, '');
+    // summary = summary.replace(/<(?:.|\n)*?>/gm, '');
+    summary = summary.replace(/(<([^>]+)>)/ig, "");
     summary = summary.replace(/(http(s)?:\/\/steemitimages.com\/([0-9]+x[0-9]+)\/)?http(s)?:\/\/(\w*:\w*@)?[-\w.]+(:\d+)?(\/([\w/_.]*(\?\S+)?)?)?/g, '');
     summary = summary.replace(/(\s)+Sponsored \( Powered by dclick \)(.|\n)*/im, '');
+    summary = summary.replace(/\"/g, '')
     summary = summary.replace(/\n/g,' ').trim();
     return summary.slice(0, 200).trim() + (summary.length > 200 ? "..." : "");
   }
