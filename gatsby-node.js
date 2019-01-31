@@ -30,15 +30,15 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
   }
 
   function createPost(post) {
-    const title = post.title
     const date = new Date(`${post.created}Z`);
     const json_metadata = JSON.parse(post.json_metadata);
     const tags = json_metadata.tags || [];
     const category = json_metadata.category || (parseCategory(title) || "ETC"); //title.match(/(?<=^\[)([^}]*)(?=\])/g)
     const summary = makeSummary(post.body);
+    const title = post.title.replace(`[${category}]`, '').replace(/\"/g, '').trim();
     const content = [
       '---',
-      `title: "${title.replace(/\"/g, '')}"`,
+      `title: "${title}"`,
       `author: ${post.author}`,
       `date: "${post.created}Z"`,
       `layout: post`,
