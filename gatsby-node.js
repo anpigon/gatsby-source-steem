@@ -33,12 +33,12 @@ exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => 
     const date = new Date(`${post.created}Z`);
     const json_metadata = JSON.parse(post.json_metadata);
     const tags = json_metadata.tags || [];
+    const title = post.title.replace(/\"/g, '').trim();
     const category = json_metadata.category || (parseCategory(title) || "ETC"); //title.match(/(?<=^\[)([^}]*)(?=\])/g)
     const summary = makeSummary(post.body);
-    const title = post.title.replace(`[${category}]`, '').replace(/\"/g, '').trim();
     const content = [
       '---',
-      `title: "${title}"`,
+      `title: "${title.replace(cateRegExp, '').replace(/\[[^\]]*\]\s?|/, '')}"`,
       `author: ${post.author}`,
       `date: "${post.created}Z"`,
       `layout: post`,
