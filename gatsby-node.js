@@ -1,22 +1,26 @@
 const fs = require('fs');
 // const crypto = require('crypto');
-const Remarkable = require('remarkable');
+
+const removeMd = require('remove-markdown');
+const stripHtml = require("string-strip-html");
+
 const getAll = require('./get-all');
+
+const Remarkable = require('remarkable');
+const md = new Remarkable();
+
+function makeSummary(text) {
+  let summary = stripHtml(removeMd(md.render(text)));
+  summary = summary.replace(/<(?:.|\n)*?>/gm, '');
+  //summary = summary.replace(/(<([^>]+)>)/ig, "");
+  summary = summary.replace(/(http(s)?:\/\/steemitimages.com\/([0-9]+x[0-9]+)\/)?http(s)?:\/\/(\w*:\w*@)?[-\w.]+(:\d+)?(\/([\w/_.]*(\?\S+)?)?)?/g, '');
+  summary = summary.replace(/(\s)+Sponsored \( Powered by dclick \)(.|\n)*/im, '');
+  summary = summary.replace(/\n/g,' ').replace(/\"/g, '');
+  return summary.slice(0, 200).trim() + (summary.length > 200 ? "..." : "");
+}
 
 exports.sourceNodes = async ({ boundActionCreators }, { path, tag, sortBy }) => {
   const { createNode } = boundActionCreators;
-
-  const md = new Remarkable();
-
-  function makeSummary(text) {
-    let summary = md.render(text);
-    summary = summary.replace(/<(?:.|\n)*?>/gm, '');
-    //summary = summary.replace(/(<([^>]+)>)/ig, "");
-    summary = summary.replace(/(http(s)?:\/\/steemitimages.com\/([0-9]+x[0-9]+)\/)?http(s)?:\/\/(\w*:\w*@)?[-\w.]+(:\d+)?(\/([\w/_.]*(\?\S+)?)?)?/g, '');
-    summary = summary.replace(/(\s)+Sponsored \( Powered by dclick \)(.|\n)*/im, '');
-    summary = summary.replace(/\n/g,' ').replace(/\"/g, '');
-    return summary.slice(0, 200).trim() + (summary.length > 200 ? "..." : "");
-  }
 
   const cateRegExp = new RegExp(/(?<=^\[)([^/]*)(?=\])/g);
   function parseCategory(text) {
